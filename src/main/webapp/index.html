@@ -6,36 +6,167 @@
         
         <link rel="stylesheet" href="js/leaflet/leaflet.css" />
         <link rel="stylesheet" href="style/style.css" />
+        <style media="screen" type="text/css">
+            @import "style/themes/base/jquery-ui.css";
+            @import "style/smoothness/jquery-ui-1.10.2.custom.min.css";
+        </style>
+        <script type="text/javascript" src="js/jquery.js"></script>
         <script src="js/leaflet/leaflet.js"></script>
+        <script type="text/javascript" src="js/jquery.datepicker.addons.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.min.js"></script>
     </head>
     <body>
+       <script>
+	$(function() {
+		$( 'input' ).filter('.dateClass').datepicker({dateFormat: 'yy-mm-dd'});
+                
+	});
+	</script>
+        <h3>Hello World!</h3>
+        <nav style="float:left">
+				<h3>Sélection Date</h3>
+                <input type="date" name="date">
+				<h3>Produit</h3>
+				<select>
+                                    <option onclick="AffichageProduit(1)"> Jupe
+                                    <option onclick="AffichageProduit(2)"> Robe
+                                    <option onclick="AffichageProduit(3)"> Pantalon
+                                    <option onclick="AffichageProduit(4)"> Mouffle	
+				</select>
+				
+				
+				<h3>Météo</h3>
+				<ul>
+					<li><input type="radio" onclick="AffichageMeteo(true)" name="choix" value="yes">Oui </li>
+					<li><input type="radio" onclick="AffichageMeteo(false)" name="choix" value="no">Non</li>
+				</ul>
+				<input type="submit" name="envoyer" value="Envoyer">
+        </nav>
         
-           
-        <h1>Hello World!</h1>
+        
         <div id="map">
-            <div id="map_holder"></div>
+            <div id="map_holder"  style="float:left"></div>
         </div>
+        <div style="float:left; width:300px" >
+        </div>
+        
         <script>
 //       document.ready(function() {
+
+            //création marker style nuage
+			var nuage=L.icon({
+				iconUrl :'image/nuage.jpg',
+				iconSize: [35,35], //taille de l'icone
+				});
+			
+			//création marker style soleil
+			var soleil=L.icon({
+				iconUrl :'image/soleil.jpg',
+				iconSize: [35,35], //taille de l'icone
+				});
+				
+			//création marker style orage
+			var orage=L.icon({
+				iconUrl :'image/orage.jpg',
+				iconSize: [35,35], //taille de l'icone
+				});
+				
+			//création marker style neige
+			var neige=L.icon({
+				iconUrl :'image/neige.jpg',
+				iconSize: [35,35], //taille de l'icone
+				});
+			
+			// création d'une liste contenant les image météo
+           var listemeteo=new Array(soleil, nuage, orage, neige);
+           var layer1 = new L.LayerGroup();
+           var layerjupe = new L.LayerGroup();
+           var layerpantalon = new L.LayerGroup();
+           var layerrobe = new L.LayerGroup();
+           var layermoufle= new L.LayerGroup();
+                        
+                        
            var apiKey = 'd1a7eeb0ba094354bc57332394507fed';
            var styleID = '997';
-           var map = L.map('map').setView([47.505, -0.09], 6); 
+           var map = L.map('map').setView([46.905, 2.09], 6); 
 //           var southWest = new L.LatLng(50.233152, -6.635742);
 //           var northEast = new L.LatLng(53.644638, 2.109375);
 //           var bounds = new L.LatLng(southWest, northEast);
-            var marker = L.marker([47.5, -0.09]).addTo(map);
             
+            layermoufle.addLayer(L.circle([50.69421, 2.67456], 50000, {
+                color: 'pink',
+                fillColor: '#f03',
+                fillOpacity: 0.5
+                }));
+                
+            $.get('GetMeteoInformation?date=2013-12-07', function(data) {
+                            for (var i = 0; i < data.length; i++) {
+                                layer1.addLayer(L.marker([data[i].longitude, data[i].latitude],{icon:listemeteo[data[i].symbol]}));
+                            }});
+                        
+            function AffichageMeteo(x)
+			{
+				if(x==true){
+					map.addLayer(layer1);
+				}else{
+					map.removeLayer(layer1);
+				}
+			}
+            
+            $.get('GetProductBought?start=324196414&end=324206414', function(data) {
+                            for (var i = 0; i < data.length; i++) {
+                                layerjupe.addLayer(L.circle([data[i].latitude, data[i].longitude], 1000, {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5
+                }));
+            }});
+            
+            $.get('GetProductBought?start=324239414&end=324244414', function(data) {
+                            for (var i = 0; i < data.length; i++) {
+                                layerpantalon.addLayer(L.circle([data[i].latitude, data[i].longitude], 1000, {
+                color: 'green',
+                fillColor: '#f03',
+                fillOpacity: 0.5
+                }));
+            }});
+        
+        $.get('GetProductBought?start=324326414&end=324346414', function(data) {
+                            for (var i = 0; i < data.length; i++) {
+                                layerrobe.addLayer(L.circle([data[i].latitude, data[i].longitude], 1000, {
+                color: 'purple',
+                fillColor: '#f03',
+                fillOpacity: 0.5
+                }));
+            }});
+        
+        function AffichageProduit(x)
+			{
+				if(x==1){
+					map.addLayer(layerjupe);
+				}else{
+					map.removeLayer(layerjupe);
+				}
+                                if(x==2){
+					map.addLayer(layerrobe);
+				}else{
+					map.removeLayer(layerrobe);
+				}
+                                if(x==3){
+					map.addLayer(layerpantalon);
+				}else{
+					map.removeLayer(layerpantalon);
+				}
+                                if(x==4){
+					map.addLayer(layermoufle);
+				}else{
+					map.removeLayer(layermoufle);
+				}
+			}
+                  
     //TODO FOR
-            var circle = L.circle([46.5, 5.20], 20000, {
-                color: 'red',
-                fillColor: '#f03',
-                fillOpacity: 0.5
-                }).addTo(map);
-                var circle2 = L.circle([43.5, 3.20], 50000, {
-                color: 'red',
-                fillColor: '#f03',
-                fillOpacity: 0.5
-                }).addTo(map);
+            
+               
            
         L.tileLayer('http://{s}.tile.cloudmade.com/'+apiKey+'/'+styleID+'/256/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
@@ -44,5 +175,6 @@
 //});
 
         </script> 
+         
     </body>
 </html>

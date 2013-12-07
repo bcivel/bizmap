@@ -4,9 +4,25 @@
         <servlet-name>DrawMap</servlet-name>
         <servlet-class>com.redoute.bizmap.servlet.DrawMap</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GetMeteoInformation</servlet-name>
+        <servlet-class>com.redoute.bizmap.servlet.GetMeteoInformation</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GetProductBought</servlet-name>
+        <servlet-class>com.redoute.bizmap.servlet.GetProductBought</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DrawMap</servlet-name>
         <url-pattern>/DrawMap</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetMeteoInformation</servlet-name>
+        <url-pattern>/GetMeteoInformation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetProductBought</servlet-name>
+        <url-pattern>/GetProductBought</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
